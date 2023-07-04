@@ -9,6 +9,6 @@ services:
     # For local development, use Composer via 'docker-compose run --rm composer
     # install'.
     composer:
-      image: composer:1.9
+      image: composer:2.1.6
       volumes:
         - $PWD:/app

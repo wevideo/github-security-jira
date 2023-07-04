@@ -105,7 +105,7 @@ EOT;
 
         $this->setKeyLabel($githubRepo);
         $this->setKeyLabel($this->uniqueId());
-        $this->setTitle("{$this->package} ({$safeVersion}) - {$this->severity}");
+        $this->setTitle("{$this->package} ({$safeVersion}) - {$this->severity} - {$this->advisorySummary}");
         $this->setBody($body);
 
         $labels = \getenv('JIRA_ISSUE_LABELS');
