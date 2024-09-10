@@ -139,4 +139,40 @@ EOT;
 
         return str_ireplace(" ", "_", "{$this->package}:{$this->manifestPath}:{$identifier}");
     }
+
+    
+     /**
+     * Check if the issue is already created and that the duplicate issue was not OPEN.
+     *
+     * @return ?string ID of existing issue, or null if not found.
+     */
+    public function exists(): ?string
+    {
+        $this->validate();
+
+        if (!$this->keyLabels) {
+            return null;
+        }
+
+        $jql = "PROJECT = '{$this->project}' ";
+
+        foreach ($this->keyLabels as $label) {
+            $jql .= "AND labels IN ('{$label}') ";
+        }
+
+        // Some issues will re-appear in case of regression, even if they were present in the backlog but closed.
+        // Adding a check to allow re-creating a vulnerability issue for a similar one that was closed.
+        $jql .= "AND statusCategory != Done ORDER BY created DESC";
+
+        /** @var \JiraRestApi\Issue\IssueSearchResult $result */
+        $result = $this->issueService->search($jql);
+
+        if (($result->total > 0)) {
+            $issue = \reset($result->issues);
+
+            return $issue ? $issue->key : null;
+        }
+
+        return null;
+    }
 }
